@@ -29,9 +29,19 @@ class PhpClassMember {
 	}
 }
 function classesToSourceCode(array $classes): string {
-	/** @var PhpClass[] $pcs */
+	/** @var PhpClass[] $classes */
+	$nodups = array ();
+	// duplicates protection:
+	foreach ( $classes as $key => $class ) {
+		if (in_array ( $class->name, $nodups, true )) {
+			unset ( $classes [$key] );
+		} else {
+			$nodups [] = $class->name;
+		}
+	}
+	unset ( $nodups, $key, $class );
 	$ret = '';
-	foreach ( $pcs as $pc ) {
+	foreach ( $classes as $pc ) {
 		$ret .= PhpClassToSourceCode ( $pc ) . "\n";
 	}
 	return $ret;
