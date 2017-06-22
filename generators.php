@@ -1,97 +1,24 @@
 <?php
 declare(strict_types = 1);
-class PhpClass {
-	/** @var string $name */
-	public $name;
-	/** @var PhpClassMember[] $members */
-	public $members = array ();
-	public static function createFromArray(array $arr): PhpClass {
-		$ret = new PhpClass ();
-		foreach ( $arr as $prop => $val ) {
-			$ret->{$prop} = $val;
-		}
-		return $ret;
-	}
-}
-class PhpClassMember {
-	/** @var string $name */
-	public $name;
-	/** @var string|null $type */
-	public $type;
-	/** @var string|null $description */
-	public $description;
-	public static function createFromArray(array $arr): PhpClassMember {
-		$ret = new PhpClassMember ();
-		foreach ( $arr as $prop => $val ) {
-			$ret->{$prop} = $val;
-		}
-		return $ret;
-	}
-}
-function classesToSourceCode(array $classes): string {
-	/** @var PhpClass[] $pcs */
-	$ret = '';
-	foreach ( $pcs as $pc ) {
-		$ret .= PhpClassToSourceCode ( $pc ) . "\n";
-	}
-	return $ret;
-}
-function classToSourceCode(\PhpClass $pc): string {
-	$pc = clone $pc;
-	$pc->name = ucfirst ( $pc->name );
-	$ret = 'class ' . $pc->name . ' {' . "\n";
-	foreach ( $pc->members as $member ) {
-		if (! empty ( $member->type )) {
-			$ret .= '    /** @var ' . $member->type . ' $' . $member->name . ' */' . "\n";
-		}
-		$ret .= '    public $' . $member->name . ";\n";
-	}
-	$ret .= '}';
-	return $ret;
-}
-function guessPhpType(string $inputType): string {
-	$debug_orig = $inputType;
-	$inputType = strtolower ( trim ( $inputType ) );
-	$ret = '';
-	$types = array (
-			'integer' => array (
-					'int',
-					'integer',
-					'smallint',
-					'tinyint',
-					'mediumint',
-					'bigint' 
-			),
-			'float' => array (
-					'float',
-					'double',
-					'decimal',
-					'dec' 
-			),
-			'bool' => array (
-					'bool',
-					'boolean' 
-			),
-			'string' => array (
-					'string',
-					'char',
-					'varchar',
-					'tinytext',
-					'text',
-					'binary',
-					'varbinary',
-					'tinyblob',
-					'blob' 
-			) 
-	);
-	foreach ( $types as $type => $aliasarr ) {
-		foreach ( $aliasarr as $alias ) {
-			if (false !== stripos ( $inputType, $alias )) {
-				return $type; // ... to return the last result instead of the first result, comment out this line
-				$ret = $type;
+require_once ('common.inc.php');
+function arrayToClasses(array $arr, string $basename = '?'): array {
+	/** @var PhpClass[] $classes */
+	$classes = array ();
+	$class = new PhpClass ();
+	$classes [] = $class;
+	$class->name = $basename;
+	foreach ( $arr as $key => $val ) {
+		$mem = new PhpClassMember ();
+		$class->members [] = $mem;
+		$mem->name = $key;
+		if ($val !== NULL) {
+			if (is_array ( $val )) {
+				$mem->type = ucfirst ( $key );
+				$classes = array_merge ( $classes, arrayToClasses_ ( $val, $key ) );
+			} else {
+				$mem->type = gettype ( $val );
 			}
 		}
 	}
-	// hhb_var_dump ( $debug_orig, $ret );
-	return $ret;
+	return $classes;
 }
