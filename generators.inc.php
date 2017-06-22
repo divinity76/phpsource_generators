@@ -31,7 +31,7 @@ function DBToClasses(\PDO $db_handle, string $dbname): array {
 	}
 	return $classes;
 }
-function objectToClasses($obj) {
+function objectToClasses($obj): array {
 	$arr = json_decode ( json_encode ( $obj ), true );
 	return arrayToClasses ( $arr );
 }
