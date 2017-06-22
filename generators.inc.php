@@ -48,7 +48,7 @@ function arrayToClasses(array $arr, string $basename = '?'): array {
 		if ($val !== NULL) {
 			if (is_array ( $val )) {
 				$mem->type = ucfirst ( $key );
-				$classes = array_merge ( $classes, arrayToClasses_ ( $val, $key ) );
+				$classes = array_merge ( $classes, arrayToClasses ( $val, $key ) );
 			} else {
 				$mem->type = gettype ( $val );
 			}
