@@ -42,7 +42,7 @@ function classesToSourceCode(array $classes): string {
 	unset ( $nodups, $key, $class );
 	$ret = '';
 	foreach ( $classes as $pc ) {
-		$ret .= PhpClassToSourceCode ( $pc ) . "\n";
+		$ret .= classToSourceCode ( $pc ) . "\n";
 	}
 	return $ret;
 }
