@@ -30,8 +30,8 @@ class PhpClassMember {
 }
 function classesToSourceCode(array $classes): string {
 	/** @var PhpClass[] $classes */
-	$nodups = array ();
 	// duplicates protection:
+	$nodups = array ();
 	foreach ( $classes as $key => $class ) {
 		if (in_array ( $class->name, $nodups, true )) {
 			unset ( $classes [$key] );
